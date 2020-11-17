@@ -2,7 +2,6 @@ package com.downloader.my;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -23,7 +21,8 @@ public class FilesFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<String> names = new ArrayList<>();
     private Context context;
-    static  FilesFragment instance  =  null;
+    static FilesFragment instance = null;
+
     public FilesFragment(Context context) {
         this.context = context;
     }
@@ -36,26 +35,25 @@ public class FilesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new MyListAdapter(names,context);
+        mAdapter = new MyListAdapter(names, context);
         recyclerView.setAdapter(mAdapter);
-        Log.d("MyTag", context.getExternalFilesDir(null).getAbsolutePath());
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            instance   = this;
+        instance = this;
     }
 
-    public static FilesFragment getInstance(){
+    public static FilesFragment getInstance() {
         return instance;
     }
 
 
-    public void updateList(){
+    public void updateList() {
         setNames();
-        mAdapter = new MyListAdapter(names,context);
+        mAdapter = new MyListAdapter(names, context);
         recyclerView.setAdapter(mAdapter);
     }
 

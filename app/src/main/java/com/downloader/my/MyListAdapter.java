@@ -5,23 +5,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHolder> {
     private ArrayList<String> names;
     Context context;
+
     public MyListAdapter(ArrayList<String> names, Context context) {
         this.names = names;
-        this.context=context;
+        this.context = context;
     }
 
 
@@ -55,9 +48,9 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
             public void onClick(View view) {
                 int itemPosition = mRecyclerView.getChildLayoutPosition(view);
                 String item = names.get(itemPosition);
-                Uri uri  = Uri.parse(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/"+item);
-
-                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/"+item));
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setDataAndType(uri, "video/*");
                 context.startActivity(intent);
                 /*FragmentTransaction fragmentTransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
@@ -74,9 +67,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.textView.setText(names.get(position).substring(0, names.get(position).lastIndexOf('.')));
-        Uri uri = Uri.parse(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/"+names.get(position));
+        Uri uri = Uri.parse(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + names.get(position));
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        //mmr.setDataSource(context.getApplicationContext(),uri);
         mmr.setDataSource(String.valueOf(uri));
         String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
         int millSecond = Integer.parseInt(durationStr);
@@ -85,7 +77,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
                 TimeUnit.MILLISECONDS.toSeconds(millSecond) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millSecond))
         );
-        holder.duration.setText("Duration : "+duration);
+        holder.duration.setText("Duration : " + duration);
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,7 +90,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
                         "Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                File file = new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/"+names.get(position));
+                                File file = new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + names.get(position));
                                 file.delete();
                                 dialog.cancel();
                                 names.remove(position);
@@ -128,12 +120,12 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
     }
 
 
-
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
         public ImageButton imageButton;
         public TextView duration;
+
         public MyViewHolder(View v) {
             super(v);
             textView = v.findViewById(R.id.name);
