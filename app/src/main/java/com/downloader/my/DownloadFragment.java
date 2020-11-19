@@ -10,14 +10,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
+
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -51,7 +55,6 @@ public class DownloadFragment extends Fragment implements View.OnClickListener {
         textView = view.findViewById(R.id.status);
     }
 
-
     @Override
     public void onClick(View view) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
@@ -77,15 +80,11 @@ public class DownloadFragment extends Fragment implements View.OnClickListener {
                 .subscribe(youtubeDLResponse -> {
                     pb.setVisibility(View.INVISIBLE);
                     textView.setText("Done!");
-                    FilesFragment.getInstance().updateList();
                 }, e -> {
                     pb.setVisibility(View.INVISIBLE);
                     textView.setText("Failed");
                     if (BuildConfig.DEBUG) Log.e("TAG", "command failed", e);
                 });
         compositeDisposable.add(disposable);
-
     }
-
-
 }

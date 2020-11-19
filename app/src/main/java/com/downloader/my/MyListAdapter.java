@@ -10,29 +10,42 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHolder> {
+
     private ArrayList<String> names;
     Context context;
-
-    public MyListAdapter(ArrayList<String> names, Context context) {
-        this.names = names;
-        this.context = context;
-    }
-
-
     RecyclerView mRecyclerView;
 
+    public MyListAdapter(Context context) {
+        this.context = context;
+        this.names = getNames();
+    }
+
+    public void updateNames() {
+        this.names = getNames();
+        /* notifyDataSetChanged needs to run on UI thread */
+        ((AppCompatActivity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
         mRecyclerView = recyclerView;
@@ -48,31 +61,32 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
             public void onClick(View view) {
                 int itemPosition = mRecyclerView.getChildLayoutPosition(view);
                 String item = names.get(itemPosition);
-                Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/"+item));
+                Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + item));
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setDataAndType(uri, "video/*");
                 context.startActivity(intent);
-                /*FragmentTransaction fragmentTransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
-                AudioPlayer player = new AudioPlayer();
-                player.setName(item);
-                player.show(fragmentTransaction,null);*/
-
+                /*
+                 * FragmentTransaction fragmentTransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+                 * AudioPlayer player = new AudioPlayer();
+                 * player.setName(item);
+                 * player.show(fragmentTransaction,null);
+                 */
             }
         });
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+        return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        /* Not displaying the extension of the file, although the extension is still in the name */
         holder.textView.setText(names.get(position).substring(0, names.get(position).lastIndexOf('.')));
         Uri uri = Uri.parse(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + names.get(position));
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(String.valueOf(uri));
         String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
         int millSecond = Integer.parseInt(durationStr);
-        String duration = String.format("%02d:%02d",
+        String duration = String.format(Locale.US, "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(millSecond),
                 TimeUnit.MILLISECONDS.toSeconds(millSecond) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millSecond))
@@ -93,8 +107,6 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
                                 File file = new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + names.get(position));
                                 file.delete();
                                 dialog.cancel();
-                                names.remove(position);
-                                notifyItemRemoved(position);
                             }
                         });
 
@@ -132,5 +144,18 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
             imageButton = v.findViewById(R.id.imageButton);
             duration = v.findViewById(R.id.duration);
         }
+    }
+
+    public ArrayList<String> getNames() {
+        ArrayList<String> names = new ArrayList<>();
+        File directory = new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles");
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return names;
+        }
+        for (File file : files) {
+            names.add(file.getName());
+        }
+        return names;
     }
 }

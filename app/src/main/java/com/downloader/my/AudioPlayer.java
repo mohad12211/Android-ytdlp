@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
 import java.io.IOException;
 
 public class AudioPlayer extends DialogFragment implements View.OnClickListener {
@@ -82,14 +84,12 @@ public class AudioPlayer extends DialogFragment implements View.OnClickListener 
                 }
             }
         });
-
         return view;
     }
 
     public void setName(String name) {
         this.name = name;
     }
-
 
     @Override
     public void onStop() {
@@ -99,6 +99,7 @@ public class AudioPlayer extends DialogFragment implements View.OnClickListener 
         dismissAllowingStateLoss();
     }
 
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -108,7 +109,6 @@ public class AudioPlayer extends DialogFragment implements View.OnClickListener 
         int width = displayMetrics.widthPixels;
 
         getDialog().getWindow().setLayout(width, height);
-
     }
 
     @Override

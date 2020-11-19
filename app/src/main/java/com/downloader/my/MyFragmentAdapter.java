@@ -1,6 +1,7 @@
 package com.downloader.my;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -14,44 +15,44 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
     DownloadFragment downloadFragment;
     FilesFragment filesFragment;
 
-    public MyFragmentAdapter(@NonNull FragmentManager fm, int behavior) {
+    public static final int DOWNLOAD_TAB = 0;
+    public static final int FILES_TAB = 1;
+    public static final int TAB_COUNT = 2;
+
+    public MyFragmentAdapter(@NonNull FragmentManager fm, int behavior, Context context) {
         super(fm, behavior);
+        this.context = context;
+        downloadFragment = new DownloadFragment(context);
+        filesFragment = new FilesFragment(context);
 
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
+
         switch (position) {
-            case 0:
+            case DOWNLOAD_TAB:
                 return downloadFragment;
-            case 1:
+            case FILES_TAB:
                 return filesFragment;
-
-
         }
-        return fragment;
+        return null;
+
     }
 
     @Override
     public int getCount() {
-        return 2;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-        downloadFragment = new DownloadFragment(context);
-        filesFragment = new FilesFragment(context);
+        return TAB_COUNT;
     }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
-            case 0:
+            case DOWNLOAD_TAB:
                 return "Download";
-            case 1:
+            case FILES_TAB:
                 return "Files";
         }
         return super.getPageTitle(position);
