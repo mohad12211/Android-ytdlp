@@ -81,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+        
+        /* Create directory if it doesn't exist for FileObserver */
+
+        File path = new File(this.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles");
+        if (!path.exists()){
+            path.mkdirs();
+        }
 
         /* Start FileObserver, update the FilesFragment adapter when file deleted or created */
 
