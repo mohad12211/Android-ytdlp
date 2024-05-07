@@ -8,5 +8,6 @@ Uses embedded python runtime to run yt-dlp. Credits to https://github.com/yauser
 
 # Features
 - Auto Updates yt-dlp to the latest release version.
-- In-App auto-player.
-- Automatically update files list
+- In-App auto-player with `MediaPlayer`
+- Automatically update files list with `FileObserver`
+- Asynchronous and event-based programs with `RxJava`
