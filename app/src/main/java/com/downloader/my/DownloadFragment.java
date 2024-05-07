@@ -1,5 +1,7 @@
 package com.downloader.my;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,8 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class DownloadFragment extends Fragment implements View.OnClickListener {
 
@@ -59,8 +59,8 @@ public class DownloadFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
         String link = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
-        String command = "-o " + context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/%(title)s.%(ext)s " + link;
-        //String command = "-f bestaudio -o " + context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/%(title)s.%(ext)s " + link;
+//        String command = "-o " + context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/%(title)s.%(ext)s " + link;
+        String command = "-f bestaudio -o " + context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/%(title)s.%(ext)s " + link;
         YoutubeDLRequest request = new YoutubeDLRequest(Collections.emptyList());
         String commandRegex = "\"([^\"]*)\"|(\\S+)";
         Matcher m = Pattern.compile(commandRegex).matcher(command);

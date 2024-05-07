@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.yausername.youtubedl_android.BuildConfig;
 import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLException;
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(MyFragmentAdapter.FILES_TAB).setIcon(R.drawable.audio_icon);
 
         /* Update youtube-dl */
-        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().updateYoutubeDL(getApplication()))
+        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._STABLE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(status -> {
@@ -81,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        
+
         /* Create directory if it doesn't exist for FileObserver */
 
         File path = new File(this.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles");
-        if (!path.exists()){
+        if (!path.exists()) {
             path.mkdirs();
         }
 

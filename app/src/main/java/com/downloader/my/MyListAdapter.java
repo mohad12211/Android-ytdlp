@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
@@ -61,17 +63,17 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
             public void onClick(View view) {
                 int itemPosition = mRecyclerView.getChildLayoutPosition(view);
                 String item = names.get(itemPosition);
-                Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + item));
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setDataAndType(uri, "video/*");
-                context.startActivity(intent);
-                /*
-                 * FragmentTransaction fragmentTransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
-                 * AudioPlayer player = new AudioPlayer();
-                 * player.setName(item);
-                 * player.show(fragmentTransaction,null);
-                 */
+//                Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(context.getExternalFilesDir(null).getAbsolutePath() + "/MyFiles/" + item));
+//                Intent intent = new Intent(Intent.ACTION_VIEW);
+//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                intent.setDataAndType(uri, "video/*");
+//                context.startActivity(intent);
+
+                 FragmentTransaction fragmentTransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+                 AudioPlayer player = new AudioPlayer();
+                 player.setName(item);
+                 player.show(fragmentTransaction,null);
+
             }
         });
         return new MyViewHolder(v);
